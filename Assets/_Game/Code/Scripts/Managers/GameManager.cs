@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 
 public enum GameState {
+    Idle,
     ResetGame,
     NextLevel,
     Play,
@@ -51,7 +52,7 @@ public class GameManager : MonoBehaviour
 
     void Start ()
     {
-        ChangeState (GameState.ResetGame);
+        ChangeState (GameState.Idle);
     }
 
     public void ChangeState (GameState newState)
@@ -62,9 +63,22 @@ public class GameManager : MonoBehaviour
         stateTime = 0;
 
         switch (newState) {
+            case GameState.Idle:
+                GameOverScreen.SetActive (false);
+                PauseScreen.SetActive (false);
+                Ship.gameObject.SetActive (false);
+                LevelText.gameObject.SetActive (false);
+                ScoreText.gameObject.SetActive (false);
+                Obstacles.Reset();
+                for (int i = 0; i < 10; i++)
+                {
+                    Obstacles.NextLevel();
+                }
+                break;
             case GameState.ResetGame:
                 GameOverScreen.SetActive (false);
                 Ship.gameObject.SetActive (true);
+                ScoreText.gameObject.SetActive(true);
                 Ship.Reset ();
                 Obstacles.Reset ();
                 SetScore (0);
@@ -109,9 +123,10 @@ public class GameManager : MonoBehaviour
                 CheckForPause();
                 break;
             case GameState.GameOver:
-                if (stateTime > 3) {
+                if (stateTime > 5) {
                     if (Input.GetButtonDown ("Fire1")) {
-                        ChangeState (GameState.ResetGame);
+                        ChangeState (GameState.Idle);
+                        SceneFlowManager.Instance.LoadMenuScene();
                     }
                 }
                 break;
