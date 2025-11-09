@@ -1,10 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+
+    [SerializeField] private AudioMixer audioMixer;
+
+    [SerializeField] private AudioSource shootingSFX;
+    [SerializeField] private AudioSource obstacleBreakSFX;
+    [SerializeField] private AudioSource shipExplodingSFX;
 
     private void Awake ()
     {
@@ -15,22 +23,23 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public AudioSource ShootingSFX;
-    public AudioSource ObstacleBreakSFX;
-    public AudioSource ShipExplodingSFX;
+    public void ChangeVolume (float value)
+    {
+        audioMixer.SetFloat("VolumeMaster", Mathf.Log10(Mathf.Max(value, .01f)) * 20);
+    }
 
     public void PlayShooting ()
     {
-        ShootingSFX.Play ();
+        shootingSFX.Play ();
     }
 
     public void PlayObstacleBreak ()
     {
-        ObstacleBreakSFX.Play ();
+        obstacleBreakSFX.Play ();
     }
 
     public void PlayShipExploding ()
     {
-        ShipExplodingSFX.Play ();
+        shipExplodingSFX.Play ();
     }
 }
