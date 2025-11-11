@@ -34,10 +34,13 @@ public class SceneFlowManager : MonoBehaviour
         SceneManager.UnloadSceneAsync(MenuSceneName);
 
         GameManager.Instance.ChangeState(GameState.ResetGame);
+
+        InputManager.Instance.SetInputState(InputManager.STATE_GAMEPLAY);
     }
 
     public void LoadMenuScene ()
     {
         SceneManager.LoadScene(MenuSceneName, LoadSceneMode.Additive);
+        InputManager.Instance.SetInputState(InputManager.STATE_MENU);
     }
 }

@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ShipController : MonoBehaviour
 {
+    private PlayerControls.GameplayActions gameplayActions;
+
     public GameObject Projectile;
 
     public GameObject ImplosionFX;
@@ -24,6 +27,57 @@ public class ShipController : MonoBehaviour
     float currentVelocity = 0;
 
     float projectileDelay;
+
+    // Track Input Action states
+    private bool isShooting;
+    private float currentSteeringInput;
+    private float currentAccelerateInput;
+
+    private void OnEnable()
+    {
+        if (InputManager.Instance == null)
+        {
+            Debug.LogError("FATAL: InputManager not found in the scene! Controls can't be assigned.");
+            return;
+        }
+
+        gameplayActions = InputManager.Instance.GetGameplayActions();
+
+        gameplayActions.Shoot.performed += OnShoot;
+        gameplayActions.Shoot.canceled += OnShoot;
+
+        gameplayActions.Steer.performed += OnSteer;
+        gameplayActions.Steer.canceled += OnSteer;
+
+        gameplayActions.Accelerate.performed += OnAccelerate;
+        gameplayActions.Accelerate.canceled += OnAccelerate;
+    }
+
+    private void OnDisable()
+    {
+        if (gameplayActions.Accelerate != null)
+        {
+            gameplayActions.Shoot.performed -= OnShoot;
+            gameplayActions.Shoot.canceled -= OnShoot;
+
+            gameplayActions.Steer.performed -= OnSteer;
+            gameplayActions.Steer.canceled -= OnSteer;
+
+            gameplayActions.Accelerate.performed -= OnAccelerate;
+            gameplayActions.Accelerate.canceled -= OnAccelerate;
+        }
+    }
+
+    public void OnShoot(InputAction.CallbackContext context)
+    {
+        isShooting = context.performed;
+        projectileDelay = 0;
+    }
+
+    public void OnSteer(InputAction.CallbackContext context) => currentSteeringInput = context.ReadValue<float>();
+    public void OnAccelerate(InputAction.CallbackContext context) => currentAccelerateInput = context.ReadValue<float>();
+
+
 
     // For object avoidance on spawn
     public bool IsSafeToSpawn (Vector2 position)
@@ -58,9 +112,6 @@ public class ShipController : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.Instance.CurrentState == GameState.Pause)
-            return;
-
         UpdateRotation ();
         UpdateAcceleration ();
         UpdateShooting ();
@@ -68,12 +119,12 @@ public class ShipController : MonoBehaviour
 
     void UpdateRotation ()
     {
-        if (Input.GetAxis("Horizontal") < 0) // Rotate counter clockwise
+        if (currentSteeringInput < 0) // Rotate counter clockwise
         {
             currentRotationSpeed -= RotationSpeedAcceleration * Time.deltaTime;
             currentRotationSpeed = Mathf.Max(-MaxRotationSpeed, currentRotationSpeed);
         }
-        else if (Input.GetAxis("Horizontal") > 0) // Rotate clockwise
+        else if (currentSteeringInput > 0) // Rotate clockwise
         {
             currentRotationSpeed += RotationSpeedAcceleration * Time.deltaTime;
             currentRotationSpeed = Mathf.Min(MaxRotationSpeed, currentRotationSpeed);
@@ -91,12 +142,12 @@ public class ShipController : MonoBehaviour
 
     void UpdateAcceleration ()
     {
-        if (Input.GetAxis("Vertical") > 0) // Accelerate
+        if (currentAccelerateInput > 0) // Accelerate
         {
             currentVelocity += VelocityAcceleration * Time.deltaTime;
             currentVelocity = Mathf.Min(currentVelocity, MaxForwardVelocity);
         }
-        else if (Input.GetAxis("Vertical") < 0) // Reverse
+        else if (currentAccelerateInput < 0) // Reverse
         {
             currentVelocity -= VelocityAcceleration * Time.deltaTime;
             currentVelocity = Mathf.Max(currentVelocity, MaxReverseVelocity);
@@ -125,12 +176,8 @@ public class ShipController : MonoBehaviour
 
     void UpdateShooting ()
     {
-        if (Input.GetButtonDown ("Fire1")) {
-            LaunchProjectile();
-            projectileDelay = 1.0f / RateOfFire;
-        }
-
-        if (Input.GetButton("Fire1")) {
+        if (isShooting)
+        {
             projectileDelay -= Time.deltaTime;
             if (projectileDelay <= 0)
             {
