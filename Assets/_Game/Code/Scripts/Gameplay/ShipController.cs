@@ -34,7 +34,6 @@ public class ShipController : MonoBehaviour
         return true;
     }
 
-
     void OnTriggerEnter (Collider other)
     {
         if (other.gameObject.GetComponent<Obstacle>() != null) {
@@ -69,38 +68,51 @@ public class ShipController : MonoBehaviour
 
     void UpdateRotation ()
     {
-        if (Input.GetAxis ("Horizontal") < 0) { // Rotate counter clockwise
+        if (Input.GetAxis("Horizontal") < 0) // Rotate counter clockwise
+        {
             currentRotationSpeed -= RotationSpeedAcceleration * Time.deltaTime;
-            currentRotationSpeed = Mathf.Max (-MaxRotationSpeed, currentRotationSpeed);
-        } else if (Input.GetAxis ("Horizontal") > 0) { // Rotate clockwise
+            currentRotationSpeed = Mathf.Max(-MaxRotationSpeed, currentRotationSpeed);
+        }
+        else if (Input.GetAxis("Horizontal") > 0) // Rotate clockwise
+        {
             currentRotationSpeed += RotationSpeedAcceleration * Time.deltaTime;
-            currentRotationSpeed = Mathf.Min (MaxRotationSpeed, currentRotationSpeed);
-        } else {
+            currentRotationSpeed = Mathf.Min(MaxRotationSpeed, currentRotationSpeed);
+        }
+        else
+        {
             currentRotationSpeed = 0;
         }
 
-        if (currentRotationSpeed != 0) {
-            transform.Rotate (Vector3.back * Time.deltaTime * currentRotationSpeed);
+        if (currentRotationSpeed != 0)
+        {
+            transform.Rotate(Vector3.back * Time.deltaTime * currentRotationSpeed);
         }
     }
 
     void UpdateAcceleration ()
     {
-        if (Input.GetAxis("Vertical") > 0) { // Accelerate
+        if (Input.GetAxis("Vertical") > 0) // Accelerate
+        {
             currentVelocity += VelocityAcceleration * Time.deltaTime;
             currentVelocity = Mathf.Min(currentVelocity, MaxForwardVelocity);
-        } else if (Input.GetAxis("Vertical") < 0) {  // Reverse
+        }
+        else if (Input.GetAxis("Vertical") < 0) // Reverse
+        {
             currentVelocity -= VelocityAcceleration * Time.deltaTime;
             currentVelocity = Mathf.Max(currentVelocity, MaxReverseVelocity);
-        } else {
-            if (currentVelocity > 0) {
-                currentVelocity -= VelocityDeceleration * Time.deltaTime;
-                currentVelocity = Mathf.Max (0, currentVelocity);
+        }
+        else
+        {
+            if (currentVelocity != 0) // Decelerate
+            {
+                float deceleration = Mathf.Min (VelocityDeceleration * Time.deltaTime, Mathf.Abs (currentVelocity));
+                currentVelocity -= currentVelocity > 0 ? deceleration : -deceleration;
             }
         }
 
-        if (currentVelocity != 0) {
-            transform.Translate (Vector3.up * currentVelocity * Time.deltaTime);
+        if (currentVelocity != 0)
+        {
+            transform.Translate(Vector3.up * currentVelocity * Time.deltaTime);
         }
     }
 
