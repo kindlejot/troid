@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class BorderGuard : MonoBehaviour
 {
-    float ortoHeight;
-    float ortoWidth;
+    private float _ortoHeight;
+    private float _ortoWidth;
 
     void Start()
     {
-        ortoHeight = Camera.main.orthographicSize;
-        ortoWidth = Camera.main.orthographicSize * Camera.main.aspect;
+        _ortoHeight = Camera.main.orthographicSize;
+        _ortoWidth = Camera.main.orthographicSize * Camera.main.aspect;
     }
 
     void OnDrawGizmosSelected()
@@ -32,26 +32,26 @@ public class BorderGuard : MonoBehaviour
     void Update()
     {
     #if UNITY_EDITOR
-        ortoHeight = Camera.main.orthographicSize;
-        ortoWidth = Camera.main.orthographicSize * Camera.main.aspect;
+        _ortoHeight = Camera.main.orthographicSize;
+        _ortoWidth = Camera.main.orthographicSize * Camera.main.aspect;
     #endif
 
-        if (transform.position.x > ortoWidth) {
+        if (transform.position.x > _ortoWidth) {
             Vector3 pos = transform.position;
-            pos.x -= ortoWidth * 2;
+            pos.x -= _ortoWidth * 2;
             transform.position = pos;
-        } else if (transform.position.x < -ortoWidth) {
+        } else if (transform.position.x < -_ortoWidth) {
             Vector3 pos = transform.position;
-            pos.x += ortoWidth * 2;
+            pos.x += _ortoWidth * 2;
             transform.position = pos;
         }
-        if (transform.position.y > ortoHeight) {
+        if (transform.position.y > _ortoHeight) {
             Vector3 pos = transform.position;
-            pos.y -= ortoHeight * 2;
+            pos.y -= _ortoHeight * 2;
             transform.position = pos;
-        } else if (transform.position.y < -ortoHeight) {
+        } else if (transform.position.y < -_ortoHeight) {
             Vector3 pos = transform.position;
-            pos.y += ortoHeight * 2;
+            pos.y += _ortoHeight * 2;
             transform.position = pos;
         }
     }

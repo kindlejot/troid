@@ -17,18 +17,19 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     public GameState CurrentState;
-    private GameState previousState;
+    private GameState _previousState;
 
     public int Score;
 
     public ShipController Ship;
-    public ObstacleManager Obstacles;
-    public TextMeshProUGUI ScoreText;
-    public TextMeshProUGUI LevelText;
-    public GameObject GameOverScreen;
-    public GameObject PauseScreen;
+    [SerializeField] private ObstacleManager obstacles;
+    [SerializeField] private GameObject scoreLabel;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private GameObject gameOverScreen;
+    [SerializeField] private GameObject pauseScreen;
 
-    float stateTime;
+    float _stateTime;
 
     private void Awake ()
     {
@@ -42,7 +43,7 @@ public class GameManager : MonoBehaviour
     void SetScore (int score)
     {
         Score = score;
-        ScoreText.text = Score.ToString();
+        scoreText.text = Score.ToString();
     }
 
     public void AddPoints (int points)
@@ -57,53 +58,55 @@ public class GameManager : MonoBehaviour
 
     public void ChangeState (GameState newState)
     {
-        previousState = CurrentState;
+        _previousState = CurrentState;
         CurrentState = newState;
 
-        stateTime = 0;
+        _stateTime = 0;
 
         switch (newState) {
             case GameState.Idle:
-                GameOverScreen.SetActive (false);
-                PauseScreen.SetActive (false);
-                Ship.gameObject.SetActive (false);
-                LevelText.gameObject.SetActive (false);
-                ScoreText.gameObject.SetActive (false);
-                Obstacles.Reset();
-                for (int i = 0; i < 10; i++)
+                Ship.gameObject.SetActive(false);
+                gameOverScreen.SetActive (false);
+                pauseScreen.SetActive (false);
+                scoreLabel.SetActive (false);
+                levelText.gameObject.SetActive (false);
+                scoreText.gameObject.SetActive (false);
+                obstacles.Reset();
+                for (int i = 0; i < 5; i++)
                 {
-                    Obstacles.NextLevel();
+                    obstacles.NextLevel();
                 }
                 break;
             case GameState.ResetGame:
-                GameOverScreen.SetActive (false);
+                gameOverScreen.SetActive (false);
                 Ship.gameObject.SetActive (true);
-                ScoreText.gameObject.SetActive(true);
+                scoreLabel.SetActive(true);
+                scoreText.gameObject.SetActive(true);
                 Ship.Reset ();
-                Obstacles.Reset ();
+                obstacles.Reset ();
                 SetScore (0);
                 ChangeState (GameState.NextLevel);
                 break;
             case GameState.NextLevel:
-                Obstacles.NextLevel ();
-                LevelText.gameObject.SetActive (true);
-                LevelText.text =  "LEVEL " + Obstacles.CurrentLevel;
+                obstacles.NextLevel ();
+                levelText.gameObject.SetActive (true);
+                levelText.text =  "LEVEL " + obstacles.CurrentLevel;
                 break;
             case GameState.Play:
-                if (previousState == GameState.Pause)
+                if (_previousState == GameState.Pause)
                 {
                     Time.timeScale = 1;
                 }
-                LevelText.gameObject.SetActive (false);
-                PauseScreen.SetActive(false);
+                levelText.gameObject.SetActive (false);
+                pauseScreen.SetActive(false);
                 break;
             case GameState.GameOver:
-                LevelText.gameObject.SetActive (false);
-                GameOverScreen.SetActive (true);
+                levelText.gameObject.SetActive (false);
+                gameOverScreen.SetActive (true);
                 Ship.gameObject.SetActive (false);
                 break;
             case GameState.Pause:
-                PauseScreen.SetActive (true);
+                pauseScreen.SetActive (true);
                 Time.timeScale = 0;
                 break;
             default:
@@ -113,17 +116,17 @@ public class GameManager : MonoBehaviour
 
     void UpdateState ()
     {
-        stateTime += Time.deltaTime;
+        _stateTime += Time.deltaTime;
 
         switch (CurrentState) {
             case GameState.NextLevel:
-                if (stateTime > 3) {
+                if (_stateTime > 3) {
                     ChangeState (GameState.Play);
                 }
                 CheckForPause();
                 break;
             case GameState.GameOver:
-                if (stateTime > 5) {
+                if (_stateTime > 5) {
                     if (Input.GetButtonDown ("Fire1")) {
                         ChangeState (GameState.Idle);
                         SceneFlowManager.Instance.LoadMenuScene();

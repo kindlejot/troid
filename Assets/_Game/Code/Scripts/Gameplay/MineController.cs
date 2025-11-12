@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class MineController : Obstacle
 {
-    Vector3 rotationAxis;
-    float angularSpeed;
+    private Vector3 _rotationAxis;
+    private float _angularSpeed;
 
     void Randomize ()
     {
         // Randomize the spin axis and angular speed
-        rotationAxis = Random.onUnitSphere;
-        angularSpeed = Random.Range (50, 150);
+        _rotationAxis = Random.onUnitSphere;
+        _angularSpeed = Random.Range (50, 150);
 
         // Randomize starting position
         transform.rotation = Random.rotation;
@@ -30,6 +30,6 @@ public class MineController : Obstacle
 
     protected override void Movement()
     {
-        transform.Rotate (rotationAxis, angularSpeed * Time.deltaTime);
+        transform.Rotate (_rotationAxis, _angularSpeed * Time.deltaTime);
     }
 }

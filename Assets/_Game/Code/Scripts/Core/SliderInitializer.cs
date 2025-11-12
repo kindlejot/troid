@@ -8,23 +8,23 @@ public class SliderInitializer : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI valueDisplay;
 
-    private Slider slider;
+    private Slider _slider;
 
     private void Awake()
     {
-        slider = GetComponent<Slider>();
+        _slider = GetComponent<Slider>();
     }
 
     private void Start()
     {
-        if (slider == null)
+        if (_slider == null)
         {
             Debug.LogError ($"Slider component is missing from {gameObject.name}");
             return;
         }
         
-        slider.onValueChanged.RemoveAllListeners();
-        slider.onValueChanged.AddListener(UpdateValueDisplay);
+        _slider.onValueChanged.RemoveAllListeners();
+        _slider.onValueChanged.AddListener(UpdateValueDisplay);
 
         if (SettingsManager.Instance == null)
         {
@@ -34,12 +34,12 @@ public class SliderInitializer : MonoBehaviour
 
         float savedValue = SettingsManager.Instance.GetSavedSettingValue(settingKey);
 
-        slider.onValueChanged.AddListener((float value) =>
+        _slider.onValueChanged.AddListener((float value) =>
         {
             SettingsManager.Instance.SetSettingValue(settingKey, value);
         });
 
-        slider.value = savedValue;
+        _slider.value = savedValue;
     }
 
     private void UpdateValueDisplay (float value)

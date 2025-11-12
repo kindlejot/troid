@@ -83,13 +83,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9c85d9e259a28544a61985a426afadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Projectile: {fileID: 5153763633408510109, guid: 6a4fbbfc629f56a4db795727793a0b4e, type: 3}
-  ImplosionFX: {fileID: 8408797424466240579, guid: 6655b0cedada8224ba6f7e8ef7d1b2e2, type: 3}
-  MaxRotationSpeed: 180
-  RotationSpeedAcceleration: 720
-  MaxVelocity: 10
-  VelocityAcceleration: 5
-  VelocityDeceleration: 4
+  projectile: {fileID: 5153763633408510109, guid: 6a4fbbfc629f56a4db795727793a0b4e, type: 3}
+  implosionFX: {fileID: 8408797424466240579, guid: 6655b0cedada8224ba6f7e8ef7d1b2e2, type: 3}
+  maxRotationSpeed: 180
+  rotationSpeedAcceleration: 720
+  maxForwardVelocity: 8
+  maxReverseVelocity: -6
+  velocityAcceleration: 26
+  velocityDeceleration: 17
+  safeSpawnDistance: 5
+  rateOfFire: 5
 --- !u!114 &7188542139338177083
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,15 +8,15 @@ public class ProjectileController : MonoBehaviour
     public float Velocity = 15;
     public float ExpirationTime = 1;
 
-    Vector3 direction;
-    float expirationTimer;
-    bool ejected = false;
+    private Vector3 _direction;
+    private float _expirationTimer;
+    private bool _ejected = false;
 
     public void Eject (Vector3 direction)
     {
-        this.direction = direction;
-        ejected = true;
-        expirationTimer = ExpirationTime;
+        this._direction = direction;
+        _ejected = true;
+        _expirationTimer = ExpirationTime;
     }
 
     void OnTriggerEnter (Collider other)
@@ -29,13 +29,12 @@ public class ProjectileController : MonoBehaviour
 
     void Update ()
     {
-        if (ejected) {
-            transform.position += direction * Velocity * Time.deltaTime;
-            expirationTimer -= Time.deltaTime;
-            if (expirationTimer <= 0) {
+        if (_ejected) {
+            transform.position += _direction * Velocity * Time.deltaTime;
+            _expirationTimer -= Time.deltaTime;
+            if (_expirationTimer <= 0) {
                 Destroy (gameObject);
             }
         }
     }
-
 }

@@ -11,29 +11,29 @@ public class AsteroidController : Obstacle
 
     public int FragmentDepth
     {
-        get => fragmentDepth;
+        get => _fragmentDepth;
         set {
-            fragmentDepth = value;
-            float scale = Mathf.Pow (.8f, fragmentDepth);
+            _fragmentDepth = value;
+            float scale = Mathf.Pow (.8f, _fragmentDepth);
             transform.localScale = new Vector3 (scale, scale, scale);
         }
     }
 
-    int fragmentDepth = 0;
+    private int _fragmentDepth = 0;
 
-    float velocity;
+    private float _velocity;
 
-    Vector3 rotationAxis;
-    float angularSpeed;
+    private Vector3 _rotationAxis;
+    private float _angularSpeed;
 
     void Randomize ()
     {
         // Randomize the travel direction and velocity
-        velocity = Random.Range (MinVelocity, MaxVelocity);
+        _velocity = Random.Range (MinVelocity, MaxVelocity);
 
         // Randomize the spin axis and angular speed
-        rotationAxis = Random.onUnitSphere;
-        angularSpeed = Random.Range (10, 100);
+        _rotationAxis = Random.onUnitSphere;
+        _angularSpeed = Random.Range (10, 100);
 
         // Randomize starting position
         transform.rotation = Random.rotation;
@@ -52,7 +52,7 @@ public class AsteroidController : Obstacle
 
     protected override void Movement()
     {
-        transform.position += Direction * velocity * Time.deltaTime;
-        transform.Rotate (rotationAxis, angularSpeed * Time.deltaTime);
+        transform.position += Direction * _velocity * Time.deltaTime;
+        transform.Rotate (_rotationAxis, _angularSpeed * Time.deltaTime);
     }
 }

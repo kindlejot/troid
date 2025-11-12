@@ -6,11 +6,11 @@ using UnityEngine.Events;
 public abstract class Obstacle : MonoBehaviour
 {
     public int Health = 10;
+    public Vector3 Direction;
 
     public UnityAction<GameObject> OnDestruction;
 
     protected int health;
-    public Vector3 Direction;
 
     public virtual void Init (Vector2 position, Vector2 direction)
     {
@@ -38,5 +38,4 @@ public abstract class Obstacle : MonoBehaviour
     void Update () {
         Movement ();
     }
-
 }

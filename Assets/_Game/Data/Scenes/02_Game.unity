@@ -20,11 +20,11 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
@@ -582,11 +582,12 @@ MonoBehaviour:
   CurrentState: 0
   Score: 0
   Ship: {fileID: 216290446}
-  Obstacles: {fileID: 1606495829}
-  ScoreText: {fileID: 1512574261}
-  LevelText: {fileID: 1049135325}
-  GameOverScreen: {fileID: 1659800496}
-  PauseScreen: {fileID: 327376597}
+  obstacles: {fileID: 1606495829}
+  scoreLabel: {fileID: 1065605968}
+  scoreText: {fileID: 1512574261}
+  levelText: {fileID: 1049135325}
+  gameOverScreen: {fileID: 1659800496}
+  pauseScreen: {fileID: 327376597}
 --- !u!4 &674795604
 Transform:
   m_ObjectHideFlags: 0

@@ -5,33 +5,36 @@ using UnityEngine.InputSystem;
 
 public class ShipController : MonoBehaviour
 {
-    private PlayerControls.GameplayActions gameplayActions;
+    // Exposed to inspector
+    [Header("Spawnable GO references")]
+    [SerializeField] private GameObject projectile;
+    [SerializeField] private GameObject implosionFX;
 
-    public GameObject Projectile;
+    [Header("Control Configuration")]
+    [SerializeField] private float maxRotationSpeed = 180;
+    [SerializeField] private float rotationSpeedAcceleration = 720;
 
-    public GameObject ImplosionFX;
+    [SerializeField] private float maxForwardVelocity = 8;
+    [SerializeField] private float maxReverseVelocity = -6;
+    [SerializeField] private float velocityAcceleration = 26;
+    [SerializeField] private float velocityDeceleration = 17;
 
-    public float MaxRotationSpeed = 180;
-    public float RotationSpeedAcceleration = 720;
+    [SerializeField] private float safeSpawnDistance = 5.0f;
 
-    public float MaxForwardVelocity = 8;
-    public float MaxReverseVelocity = -6;
-    public float VelocityAcceleration = 26;
-    public float VelocityDeceleration = 17;
+    [SerializeField, Tooltip("RoF for autofire")] private float rateOfFire = 5;
 
-    public float SafeSpawnDistance = 5.0f;
+    // Class variables
+    private PlayerControls.GameplayActions _gameplayActions;
 
-    public float RateOfFire = 5; 
+    private float _currentRotationSpeed = 0;
+    private float _currentVelocity = 0;
 
-    float currentRotationSpeed = 0;
-    float currentVelocity = 0;
-
-    float projectileDelay;
+    private float _projectileDelay;
 
     // Track Input Action states
-    private bool isShooting;
-    private float currentSteeringInput;
-    private float currentAccelerateInput;
+    private bool _isShooting;
+    private float _currentSteeringInput;
+    private float _currentAccelerateInput;
 
     private void OnEnable()
     {
@@ -41,48 +44,48 @@ public class ShipController : MonoBehaviour
             return;
         }
 
-        gameplayActions = InputManager.Instance.GetGameplayActions();
+        _gameplayActions = InputManager.Instance.GetGameplayActions();
 
-        gameplayActions.Shoot.performed += OnShoot;
-        gameplayActions.Shoot.canceled += OnShoot;
+        _gameplayActions.Shoot.performed += OnShoot;
+        _gameplayActions.Shoot.canceled += OnShoot;
 
-        gameplayActions.Steer.performed += OnSteer;
-        gameplayActions.Steer.canceled += OnSteer;
+        _gameplayActions.Steer.performed += OnSteer;
+        _gameplayActions.Steer.canceled += OnSteer;
 
-        gameplayActions.Accelerate.performed += OnAccelerate;
-        gameplayActions.Accelerate.canceled += OnAccelerate;
+        _gameplayActions.Accelerate.performed += OnAccelerate;
+        _gameplayActions.Accelerate.canceled += OnAccelerate;
     }
 
     private void OnDisable()
     {
-        if (gameplayActions.Accelerate != null)
+        if (_gameplayActions.Accelerate != null)
         {
-            gameplayActions.Shoot.performed -= OnShoot;
-            gameplayActions.Shoot.canceled -= OnShoot;
+            _gameplayActions.Shoot.performed -= OnShoot;
+            _gameplayActions.Shoot.canceled -= OnShoot;
 
-            gameplayActions.Steer.performed -= OnSteer;
-            gameplayActions.Steer.canceled -= OnSteer;
+            _gameplayActions.Steer.performed -= OnSteer;
+            _gameplayActions.Steer.canceled -= OnSteer;
 
-            gameplayActions.Accelerate.performed -= OnAccelerate;
-            gameplayActions.Accelerate.canceled -= OnAccelerate;
+            _gameplayActions.Accelerate.performed -= OnAccelerate;
+            _gameplayActions.Accelerate.canceled -= OnAccelerate;
         }
     }
 
     public void OnShoot(InputAction.CallbackContext context)
     {
-        isShooting = context.performed;
-        projectileDelay = 0;
+        _isShooting = context.performed;
+        _projectileDelay = 0;
     }
 
-    public void OnSteer(InputAction.CallbackContext context) => currentSteeringInput = context.ReadValue<float>();
-    public void OnAccelerate(InputAction.CallbackContext context) => currentAccelerateInput = context.ReadValue<float>();
+    public void OnSteer(InputAction.CallbackContext context) => _currentSteeringInput = context.ReadValue<float>();
+    public void OnAccelerate(InputAction.CallbackContext context) => _currentAccelerateInput = context.ReadValue<float>();
 
 
 
     // For object avoidance on spawn
     public bool IsSafeToSpawn (Vector2 position)
     {
-        if (((Vector2)transform.position-position).magnitude < SafeSpawnDistance)
+        if (((Vector2)transform.position-position).magnitude < safeSpawnDistance)
             return false;
 
         return true;
@@ -97,7 +100,7 @@ public class ShipController : MonoBehaviour
 
     void Implode ()
     {
-        Instantiate (ImplosionFX, transform.position, Quaternion.identity);
+        Instantiate (implosionFX, transform.position, Quaternion.identity);
         AudioManager.Instance.PlayShipExploding ();
         GameManager.Instance.ChangeState (GameState.GameOver);
     }
@@ -106,8 +109,8 @@ public class ShipController : MonoBehaviour
     {
         transform.position = Vector3.zero;
         transform.rotation = Quaternion.identity;
-        currentRotationSpeed = 0;
-        currentVelocity = 0;
+        _currentRotationSpeed = 0;
+        _currentVelocity = 0;
     }
 
     void Update()
@@ -119,70 +122,70 @@ public class ShipController : MonoBehaviour
 
     void UpdateRotation ()
     {
-        if (currentSteeringInput < 0) // Rotate counter clockwise
+        if (_currentSteeringInput < 0) // Rotate counter clockwise
         {
-            currentRotationSpeed -= RotationSpeedAcceleration * Time.deltaTime;
-            currentRotationSpeed = Mathf.Max(-MaxRotationSpeed, currentRotationSpeed);
+            _currentRotationSpeed -= rotationSpeedAcceleration * Time.deltaTime;
+            _currentRotationSpeed = Mathf.Max(-maxRotationSpeed, _currentRotationSpeed);
         }
-        else if (currentSteeringInput > 0) // Rotate clockwise
+        else if (_currentSteeringInput > 0) // Rotate clockwise
         {
-            currentRotationSpeed += RotationSpeedAcceleration * Time.deltaTime;
-            currentRotationSpeed = Mathf.Min(MaxRotationSpeed, currentRotationSpeed);
+            _currentRotationSpeed += rotationSpeedAcceleration * Time.deltaTime;
+            _currentRotationSpeed = Mathf.Min(maxRotationSpeed, _currentRotationSpeed);
         }
         else
         {
-            currentRotationSpeed = 0;
+            _currentRotationSpeed = 0;
         }
 
-        if (currentRotationSpeed != 0)
+        if (_currentRotationSpeed != 0)
         {
-            transform.Rotate(Vector3.back * Time.deltaTime * currentRotationSpeed);
+            transform.Rotate(Vector3.back * Time.deltaTime * _currentRotationSpeed);
         }
     }
 
     void UpdateAcceleration ()
     {
-        if (currentAccelerateInput > 0) // Accelerate
+        if (_currentAccelerateInput > 0) // Accelerate
         {
-            currentVelocity += VelocityAcceleration * Time.deltaTime;
-            currentVelocity = Mathf.Min(currentVelocity, MaxForwardVelocity);
+            _currentVelocity += velocityAcceleration * Time.deltaTime;
+            _currentVelocity = Mathf.Min(_currentVelocity, maxForwardVelocity);
         }
-        else if (currentAccelerateInput < 0) // Reverse
+        else if (_currentAccelerateInput < 0) // Reverse
         {
-            currentVelocity -= VelocityAcceleration * Time.deltaTime;
-            currentVelocity = Mathf.Max(currentVelocity, MaxReverseVelocity);
+            _currentVelocity -= velocityAcceleration * Time.deltaTime;
+            _currentVelocity = Mathf.Max(_currentVelocity, maxReverseVelocity);
         }
         else
         {
-            if (currentVelocity != 0) // Decelerate
+            if (_currentVelocity != 0) // Decelerate
             {
-                float deceleration = Mathf.Min (VelocityDeceleration * Time.deltaTime, Mathf.Abs (currentVelocity));
-                currentVelocity -= currentVelocity > 0 ? deceleration : -deceleration;
+                float deceleration = Mathf.Min (velocityDeceleration * Time.deltaTime, Mathf.Abs (_currentVelocity));
+                _currentVelocity -= _currentVelocity > 0 ? deceleration : -deceleration;
             }
         }
 
-        if (currentVelocity != 0)
+        if (_currentVelocity != 0)
         {
-            transform.Translate(Vector3.up * currentVelocity * Time.deltaTime);
+            transform.Translate(Vector3.up * _currentVelocity * Time.deltaTime);
         }
     }
 
     void LaunchProjectile ()
     {
-        GameObject instance = Instantiate(Projectile, transform.position, transform.rotation);
+        GameObject instance = Instantiate(projectile, transform.position, transform.rotation);
         instance.GetComponent<ProjectileController>().Eject(transform.up);
         AudioManager.Instance.PlayShooting();
     }
 
     void UpdateShooting ()
     {
-        if (isShooting)
+        if (_isShooting)
         {
-            projectileDelay -= Time.deltaTime;
-            if (projectileDelay <= 0)
+            _projectileDelay -= Time.deltaTime;
+            if (_projectileDelay <= 0)
             {
                 LaunchProjectile();
-                projectileDelay = 1.0f / RateOfFire;
+                _projectileDelay = 1.0f / rateOfFire;
             }
         }
     }
@@ -191,7 +194,7 @@ public class ShipController : MonoBehaviour
     {
         Debug.DrawRay(
             transform.position,
-            transform.up * currentVelocity / MaxForwardVelocity, // Cap to 1 unit long
+            transform.up * _currentVelocity / maxForwardVelocity, // Cap to 1 unit long
             Color.yellow);
     }
 }

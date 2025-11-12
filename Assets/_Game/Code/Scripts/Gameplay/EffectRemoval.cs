@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class EffectRemoval : MonoBehaviour
 {
-    float selfRemovalTimer;
+    private float _selfRemovalTimer;
 
     void Awake ()
     {
-        selfRemovalTimer = GetComponent <ParticleSystem> ().main.duration;
+        _selfRemovalTimer = GetComponent <ParticleSystem> ().main.duration;
     }
 
     void Update () 
     {
-        selfRemovalTimer -= Time.deltaTime;
-        if (selfRemovalTimer <= 0) {
+        _selfRemovalTimer -= Time.deltaTime;
+        if (_selfRemovalTimer <= 0) {
             Destroy (gameObject);
         }
     }
