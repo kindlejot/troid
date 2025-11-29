@@ -54,6 +54,10 @@ public class ShipController : MonoBehaviour
 
         _gameplayActions.Accelerate.performed += OnAccelerate;
         _gameplayActions.Accelerate.canceled += OnAccelerate;
+
+        _isShooting = false;
+        _currentSteeringInput = 0;
+        _currentAccelerateInput = 0;
     }
 
     private void OnDisable()
@@ -79,8 +83,6 @@ public class ShipController : MonoBehaviour
 
     public void OnSteer(InputAction.CallbackContext context) => _currentSteeringInput = context.ReadValue<float>();
     public void OnAccelerate(InputAction.CallbackContext context) => _currentAccelerateInput = context.ReadValue<float>();
-
-
 
     // For object avoidance on spawn
     public bool IsSafeToSpawn (Vector2 position)
