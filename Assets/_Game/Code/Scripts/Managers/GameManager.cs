@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public enum GameState {
     Idle,
@@ -9,7 +10,8 @@ public enum GameState {
     NextLevel,
     Play,
     GameOver,
-    Pause
+    Pause,
+    Resume
 }
 
 public class GameManager : MonoBehaviour
@@ -27,9 +29,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private GameObject gameOverScreen;
-    [SerializeField] private GameObject pauseScreen;
 
-    float _stateTime;
+    // Class variables
+    private PlayerControls.GameplayActions _gameplayActions; // For tracking "Pause" 
+    private GameState _resumeState;
+
+    private float _stateTime;
 
     private void Awake ()
     {
@@ -37,6 +42,38 @@ public class GameManager : MonoBehaviour
             Destroy (this.gameObject);
         } else {
             Instance = this;
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (InputManager.Instance == null)
+        {
+            Debug.LogError("FATAL: InputManager not found in the scene! Controls can't be assigned.");
+            return;
+        }
+        _gameplayActions = InputManager.Instance.GetGameplayActions();
+        _gameplayActions.Pause.performed += OnPause;
+    }
+
+    private void OnDisable()
+    {
+        if (_gameplayActions.Pause != null)
+        {
+            _gameplayActions.Pause.performed -= OnPause;
+        }
+    }
+
+    public void OnPause(InputAction.CallbackContext context)
+    {
+        if (CurrentState != GameState.GameOver)
+        {
+            ChangeState(GameState.Pause);
+        }
+        else
+        {
+            ChangeState(GameState.Idle);
+            SceneFlowManager.Instance.LoadMenuScene();
         }
     }
 
@@ -67,7 +104,6 @@ public class GameManager : MonoBehaviour
             case GameState.Idle:
                 Ship.gameObject.SetActive(false);
                 gameOverScreen.SetActive (false);
-                pauseScreen.SetActive (false);
                 scoreLabel.SetActive (false);
                 levelText.gameObject.SetActive (false);
                 scoreText.gameObject.SetActive (false);
@@ -93,12 +129,7 @@ public class GameManager : MonoBehaviour
                 levelText.text =  "LEVEL " + obstacles.CurrentLevel;
                 break;
             case GameState.Play:
-                if (_previousState == GameState.Pause)
-                {
-                    Time.timeScale = 1;
-                }
                 levelText.gameObject.SetActive (false);
-                pauseScreen.SetActive(false);
                 break;
             case GameState.GameOver:
                 levelText.gameObject.SetActive (false);
@@ -106,8 +137,13 @@ public class GameManager : MonoBehaviour
                 Ship.gameObject.SetActive (false);
                 break;
             case GameState.Pause:
-                pauseScreen.SetActive (true);
                 Time.timeScale = 0;
+                _resumeState = _previousState;
+                SceneFlowManager.Instance.LoadMenuScene();
+                break;
+            case GameState.Resume:
+                Time.timeScale = 1;
+                ChangeState(_resumeState);
                 break;
             default:
                 throw new System.NotImplementedException ();          
@@ -123,32 +159,9 @@ public class GameManager : MonoBehaviour
                 if (_stateTime > 3) {
                     ChangeState (GameState.Play);
                 }
-                CheckForPause();
-                break;
-            case GameState.GameOver:
-                if (_stateTime > 5) {
-                    if (Input.GetButtonDown ("Fire1")) {
-                        ChangeState (GameState.Idle);
-                        SceneFlowManager.Instance.LoadMenuScene();
-                    }
-                }
-                break;
-            case GameState.Play:
-                CheckForPause();
-                break;
-            case GameState.Pause:
-                CheckForPause();
                 break;
             default:
                 break;
-        }
-    }
-
-    void CheckForPause ()
-    {
-        if (Input.GetButtonUp("Pause"))
-        {
-            ChangeState((CurrentState != GameState.Pause) ? GameState.Pause : GameState.Play);
         }
     }
 

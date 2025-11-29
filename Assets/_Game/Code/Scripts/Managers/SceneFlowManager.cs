@@ -29,18 +29,23 @@ public class SceneFlowManager : MonoBehaviour
         SceneManager.LoadScene(GameSceneName, LoadSceneMode.Additive);
     }
 
-    public void StartGame ()
-    {
-        SceneManager.UnloadSceneAsync(MenuSceneName);
-
-        GameManager.Instance.ChangeState(GameState.ResetGame);
-
-        InputManager.Instance.SetInputState(InputManager.STATE_GAMEPLAY);
-    }
-
-    public void LoadMenuScene ()
+    public void LoadMenuScene()
     {
         SceneManager.LoadScene(MenuSceneName, LoadSceneMode.Additive);
         InputManager.Instance.SetInputState(InputManager.STATE_MENU);
+    }
+
+    public void StartGame ()
+    {
+        SceneManager.UnloadSceneAsync(MenuSceneName);
+        GameManager.Instance.ChangeState(GameState.ResetGame);
+        InputManager.Instance.SetInputState(InputManager.STATE_GAMEPLAY);
+    }
+
+    public void ResumeGame()
+    {
+        SceneManager.UnloadSceneAsync(MenuSceneName);
+        GameManager.Instance.ChangeState(GameState.Resume);
+        InputManager.Instance.SetInputState(InputManager.STATE_GAMEPLAY);
     }
 }
