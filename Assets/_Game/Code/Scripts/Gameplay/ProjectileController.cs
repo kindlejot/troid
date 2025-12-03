@@ -22,7 +22,7 @@ public class ProjectileController : MonoBehaviour
     void OnTriggerEnter (Collider other)
     {
         if (other.gameObject.GetComponent<Obstacle>() != null) {
-            other.gameObject.GetComponent<Obstacle>().Hit (Damage);
+            other.gameObject.GetComponent<Obstacle>().Hit (Damage, other.ClosestPoint(transform.position));
             Destroy (gameObject);
         }
     }

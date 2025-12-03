@@ -8,7 +8,6 @@ public class ShipController : MonoBehaviour
     // Exposed to inspector
     [Header("Spawnable GO references")]
     [SerializeField] private GameObject projectile;
-    [SerializeField] private GameObject implosionFX;
 
     [Header("Control Configuration")]
     [SerializeField] private float maxRotationSpeed = 180;
@@ -102,8 +101,7 @@ public class ShipController : MonoBehaviour
 
     void Implode ()
     {
-        Instantiate (implosionFX, transform.position, Quaternion.identity);
-        AudioManager.Instance.PlayShipExploding ();
+        FeedbackManager.Instance.PlayImplosionFeedback(transform.position);
         GameManager.Instance.ChangeState (GameState.GameOver);
     }
 

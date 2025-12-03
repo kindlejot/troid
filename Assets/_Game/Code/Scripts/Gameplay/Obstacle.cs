@@ -21,12 +21,16 @@ public abstract class Obstacle : MonoBehaviour
 
     protected abstract void Movement ();
 
-    public virtual void Hit (int damage)
+    public virtual void Hit (int damage, Vector3 impactPoint)
     {
         health -= damage;
 
         if (health <= 0) {
+            FeedbackManager.Instance.PlayDestructionFeedback(transform.position);
             Destruct ();
+        } else
+        {
+            FeedbackManager.Instance.PlayHitFeedback(impactPoint, Quaternion.LookRotation(impactPoint - transform.position));
         }
     }
 
