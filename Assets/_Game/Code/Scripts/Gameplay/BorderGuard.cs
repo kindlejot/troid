@@ -4,13 +4,21 @@ using UnityEngine;
 
 public class BorderGuard : MonoBehaviour
 {
+    public Vector2 ObjectAccumulatedPosition => _objectAccumulatedPosition;
+
     private float _ortoHeight;
     private float _ortoWidth;
+
+    private Vector3 _objectAccumulatedPosition;
+    private Vector3 _previousPosition;
 
     void Start()
     {
         _ortoHeight = Camera.main.orthographicSize;
         _ortoWidth = Camera.main.orthographicSize * Camera.main.aspect;
+
+        _objectAccumulatedPosition = transform.position;
+        _previousPosition = transform.position;
     }
 
     void OnDrawGizmosSelected()
@@ -31,6 +39,8 @@ public class BorderGuard : MonoBehaviour
 
     void Update()
     {
+        _objectAccumulatedPosition += transform.position - _previousPosition;
+
     #if UNITY_EDITOR
         _ortoHeight = Camera.main.orthographicSize;
         _ortoWidth = Camera.main.orthographicSize * Camera.main.aspect;
@@ -54,5 +64,7 @@ public class BorderGuard : MonoBehaviour
             pos.y += _ortoHeight * 2;
             transform.position = pos;
         }
+
+        _previousPosition = transform.position;
     }
 }

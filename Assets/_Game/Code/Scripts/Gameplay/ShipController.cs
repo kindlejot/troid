@@ -8,7 +8,6 @@ public class ShipController : MonoBehaviour
     // Exposed to inspector
     [Header("Spawnable GO references")]
     [SerializeField] private GameObject projectile;
-    [SerializeField] private GameObject implosionFX;
 
     [Header("Control Configuration")]
     [SerializeField] private float maxRotationSpeed = 180;
@@ -54,6 +53,10 @@ public class ShipController : MonoBehaviour
 
         _gameplayActions.Accelerate.performed += OnAccelerate;
         _gameplayActions.Accelerate.canceled += OnAccelerate;
+
+        _isShooting = false;
+        _currentSteeringInput = 0;
+        _currentAccelerateInput = 0;
     }
 
     private void OnDisable()
@@ -80,8 +83,6 @@ public class ShipController : MonoBehaviour
     public void OnSteer(InputAction.CallbackContext context) => _currentSteeringInput = context.ReadValue<float>();
     public void OnAccelerate(InputAction.CallbackContext context) => _currentAccelerateInput = context.ReadValue<float>();
 
-
-
     // For object avoidance on spawn
     public bool IsSafeToSpawn (Vector2 position)
     {
@@ -100,8 +101,7 @@ public class ShipController : MonoBehaviour
 
     void Implode ()
     {
-        Instantiate (implosionFX, transform.position, Quaternion.identity);
-        AudioManager.Instance.PlayShipExploding ();
+        FeedbackManager.Instance.PlayImplosionFeedback(transform.position);
         GameManager.Instance.ChangeState (GameState.GameOver);
     }
 

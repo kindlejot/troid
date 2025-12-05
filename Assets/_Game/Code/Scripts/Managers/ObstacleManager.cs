@@ -14,8 +14,6 @@ public class ObstacleManager : MonoBehaviour
     public GameObject ObstacleAsteroid;
     public GameObject ObstacleMine;
 
-    public GameObject ExplosionFX;
-
     public int CurrentLevel;
 
     List<GameObject> obstacles = new List<GameObject> ();
@@ -97,9 +95,6 @@ public class ObstacleManager : MonoBehaviour
 
     void Despawn (GameObject reference)
     {
-        Instantiate (ExplosionFX, reference.transform.position, Quaternion.identity);
-        AudioManager.Instance.PlayObstacleBreak ();
-
         if (reference.GetComponent<AsteroidController>() != null) {
             int depth = reference.GetComponent<AsteroidController>().FragmentDepth;
 

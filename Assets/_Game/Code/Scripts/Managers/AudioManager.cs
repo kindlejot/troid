@@ -12,6 +12,7 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private AudioSource shootingSFX;
     [SerializeField] private AudioSource obstacleBreakSFX;
+    [SerializeField] private AudioSource obstacleHitSFX;
     [SerializeField] private AudioSource shipExplodingSFX;
 
     private void Awake ()
@@ -41,6 +42,12 @@ public class AudioManager : MonoBehaviour
     public void PlayObstacleBreak ()
     {
         obstacleBreakSFX.Play ();
+    }
+
+    public void PlayObstacleHit()
+    {
+        obstacleHitSFX.pitch = Random.Range(0.9f, 1.1f);
+        obstacleHitSFX.Play();
     }
 
     public void PlayShipExploding ()
