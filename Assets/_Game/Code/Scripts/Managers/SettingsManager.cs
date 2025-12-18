@@ -6,6 +6,7 @@ public class SettingsManager : MonoBehaviour
     public static SettingsManager Instance { get; private set; }
 
     const string MASTER_VOL_KEY = "VolumeMaster";
+    const string SFX_VOL_KEY    = "VolumeSFX";
 
     private void Awake()
     {
@@ -25,6 +26,7 @@ public class SettingsManager : MonoBehaviour
     public void LoadSettings ()
     {
         SetSettingValue (MASTER_VOL_KEY, GetSavedSettingValue (MASTER_VOL_KEY));
+        SetSettingValue (SFX_VOL_KEY, GetSavedSettingValue(SFX_VOL_KEY));
     }
 
     public void SetSettingValue (string key, float value)
@@ -35,6 +37,13 @@ public class SettingsManager : MonoBehaviour
                 if (AudioManager.Instance != null)
                 {
                     AudioManager.Instance.ChangeVolume(value);
+                }
+                break;
+
+            case SFX_VOL_KEY:
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.ChangeSFXVolume(value);
                 }
                 break;
 

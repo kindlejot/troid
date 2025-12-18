@@ -29,6 +29,11 @@ public class AudioManager : MonoBehaviour
         audioMixer.SetFloat("VolumeMaster", Mathf.Log10(Mathf.Max(value, .01f)) * 20);
     }
 
+    public void ChangeSFXVolume(float value)
+    {
+        audioMixer.SetFloat("VolumeSFX", Mathf.Log10(Mathf.Max(value, .01f)) * 20);
+    }
+
     public void PlayShooting ()
     {
         shootingSFX.Play ();
