@@ -12,6 +12,8 @@ public abstract class Obstacle : MonoBehaviour
 
     protected int health;
 
+    Coroutine _hitFlashCoroutine;
+
     public virtual void Init (Vector2 position, Vector2 direction)
     {
         health = Health;
@@ -28,8 +30,11 @@ public abstract class Obstacle : MonoBehaviour
         if (health <= 0) {
             FeedbackManager.Instance.PlayDestructionFeedback(transform.position);
             Destruct ();
-        } else
-        {
+        } else {
+            if (_hitFlashCoroutine != null) {
+                StopCoroutine(_hitFlashCoroutine);
+            }
+            _hitFlashCoroutine = StartCoroutine(GetComponent<MeshRenderer>().HitFlash());
             FeedbackManager.Instance.PlayHitFeedback(impactPoint, Quaternion.LookRotation(impactPoint - transform.position));
         }
     }
