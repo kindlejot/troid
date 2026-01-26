@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e99d73a51fa94544b607c4b1d01e6ea, type: 3}
+  m_Name: MineEasy
+  m_EditorClassIdentifier: Assembly-CSharp::ObstacleMine
+  Prefab: {fileID: 2599573946307471824, guid: d845f3ef08e0b4d4bb5b6079ea34a5cf, type: 3}
+  Health: 30
+  Points: 25

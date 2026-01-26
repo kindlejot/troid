@@ -2,17 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public enum ObstacleType {
-    Asteroid,
-    Mine,
-    FlyingSaucer
-}
-
 public class ObstacleManager : MonoBehaviour
 {
-    public GameObject ObstacleAsteroid;
-    public GameObject ObstacleMine;
+    [SerializeField] List<LevelData> Levels;
 
     public int CurrentLevel;
 
@@ -30,19 +22,18 @@ public class ObstacleManager : MonoBehaviour
 
     public void NextLevel ()
     {
-        CurrentLevel++;
-        for (int i=0;i<CurrentLevel;i++) {
-            Spawn (ObstacleType.Mine);
-        }
-
-        if (CurrentLevel >= 3)
+        if (Levels != null && Levels.Count > CurrentLevel)
         {
-            for (int i=0; i<CurrentLevel/3;i++)
+            foreach (ObstacleData obstacle in Levels[CurrentLevel].Obstacles)
             {
-                Spawn (ObstacleType.Asteroid);
+                Spawn(obstacle);
             }
         }
-
+        else
+        {
+            // TODO
+        }
+        CurrentLevel++;
     }
 
     Vector2 GetRandomPosition ()
@@ -60,68 +51,56 @@ public class ObstacleManager : MonoBehaviour
         return result;
     }
 
-    Vector2 GetRandomDirection ()
+    void Spawn(ObstacleData data, bool ignoreSafeSpawn = false)
     {
-        return Random.insideUnitCircle.normalized;
-    }
-
-    void Spawn (ObstacleType type, Vector2? position = null, Vector2? direction = null, int fragmentDepth = 0) 
-    {
-        switch (type) {
-            case ObstacleType.Asteroid: {
-                    GameObject newObstacle = Instantiate(ObstacleAsteroid);
-                    newObstacle.GetComponent<AsteroidController>().OnDestruction += Despawn;
-                    newObstacle.GetComponent<AsteroidController>().Init(position ?? GetRandomPosition(), direction ?? GetRandomDirection());
-                    newObstacle.GetComponent<AsteroidController>().FragmentDepth = fragmentDepth;
-                    obstacles.Add(newObstacle);
-                }
-                break;
-
-            case ObstacleType.Mine: {
-                    GameObject newObstacle = Instantiate(ObstacleMine);
-                    newObstacle.GetComponent<MineController>().OnDestruction += Despawn;
-                    newObstacle.GetComponent<MineController>().Init(position ?? GetRandomPosition(), Vector2.zero);
-                    obstacles.Add(newObstacle);
-                }
-                break;
-
-            case ObstacleType.FlyingSaucer:
-
-            default:
-                throw new System.NotImplementedException();
-                // break;
+        if (data.Obstacle == null || data.Obstacle.Prefab == null)
+        {
+            Debug.LogError("Trying to spawn a null Obstacle");
+            return;
         }
+
+        Vector2 spawnPosition = GetRandomPosition();
+        if (data.Spawner != null &&
+            !data.Spawner.Randomize &&
+            (ignoreSafeSpawn || 
+             GameManager.Instance.Ship.IsSafeToSpawn(data.Spawner.Position)) )
+        {
+            spawnPosition = data.Spawner.Position;
+        }
+
+        GameObject newObstacle = Instantiate(data.Obstacle.Prefab);
+        newObstacle.GetComponent<Obstacle>().OnDestruction += Despawn;
+        newObstacle.GetComponent<Obstacle>().Init(spawnPosition, data.Obstacle, data.Movement);
+        obstacles.Add(newObstacle);
     }
 
     void Despawn (GameObject reference)
     {
-        if (reference.GetComponent<AsteroidController>() != null) {
-            int depth = reference.GetComponent<AsteroidController>().FragmentDepth;
+        Obstacle obstacle = reference.GetComponent<Obstacle>();
 
-            if (depth < reference.GetComponent<AsteroidController>().MaxFragments) {
-                depth++;
-                Vector2 position = reference.transform.position;
-                Vector3 direction = reference.GetComponent<Obstacle>().Direction;
+        if (obstacle == null)
+        {
+            Debug.LogWarning("Despawning non-obstacle gameobject");
+            return;
+        }
 
-                Vector3 leftSideDir = Vector3.Cross (direction, Vector3.forward);
-                Vector3 rightSideDir = Vector3.Cross (direction, Vector3.back);
-
-                leftSideDir = Quaternion.Euler (0,0,Random.Range (-30,30)) * leftSideDir;
-                rightSideDir = Quaternion.Euler (0,0,Random.Range (-30,30)) * rightSideDir;
-
-                Spawn (ObstacleType.Asteroid, position, leftSideDir, depth);
-                Spawn (ObstacleType.Asteroid, position, rightSideDir, depth);
+        if (obstacle is AsteroidController ac)
+        {
+            if (ac.CanFragment())
+            {
+                Spawn(ac.GetFragment(true), true);
+                Spawn(ac.GetFragment(false), true);
             }
         }
+
+        GameManager.Instance.AddPoints(obstacle.Points);
         reference.GetComponent<Obstacle>().OnDestruction -= Despawn;
-        obstacles.Remove (reference);
-        Destroy (reference);
+        obstacles.Remove(reference);
+        Destroy(reference);
 
-        GameManager.Instance.AddPoints (100);
-
-        if (obstacles.Count==0) {
-            GameManager.Instance.ChangeState (GameState.NextLevel);
+        if (obstacles.Count == 0)
+        {
+            GameManager.Instance.ChangeState(GameState.NextLevel);
         }
     }
-    
 }

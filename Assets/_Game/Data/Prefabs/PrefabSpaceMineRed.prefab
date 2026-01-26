@@ -54,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: d98d9e122d938a9488ed91cdeef17cfb, type: 2}
     - target: {fileID: 919132149155446097, guid: 675c870166a566f45a98b6981b0451b0, type: 3}
       propertyPath: m_Name
-      value: SpaceMine
+      value: PrefabSpaceMineRed
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -69,6 +69,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 675c870166a566f45a98b6981b0451b0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1806329181066792926}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 675c870166a566f45a98b6981b0451b0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5332982147390135492}
   m_SourcePrefab: {fileID: 100100000, guid: 675c870166a566f45a98b6981b0451b0, type: 3}
 --- !u!1 &2599573946307471824 stripped
 GameObject:
@@ -87,8 +90,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a112b6af0ace2224f906e2b449274247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 50
-  Direction: {x: 0, y: 0, z: 0}
 --- !u!54 &8261671735166048481
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -137,3 +138,15 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.65
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5332982147390135492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2599573946307471824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07837789d73cca0439c274472349cb10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BorderGuard

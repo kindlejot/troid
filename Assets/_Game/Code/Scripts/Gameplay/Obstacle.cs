@@ -5,29 +5,48 @@ using UnityEngine.Events;
 
 public abstract class Obstacle : MonoBehaviour
 {
-    public int Health = 10;
-    public Vector3 Direction;
-
     public UnityAction<GameObject> OnDestruction;
 
-    protected int health;
+    public int Points => _points;
+
+    protected int _health;
+    protected int _points;
+
+    protected MovementConfig _movementConfig;
+    protected float _timer;
 
     Coroutine _hitFlashCoroutine;
 
-    public virtual void Init (Vector2 position, Vector2 direction)
+    public virtual void Init (Vector2 position, ObstacleConfig config, MovementConfig movement = null)
     {
-        health = Health;
+        _health = config.Health;
+        _points = config.Points;
+        _movementConfig = movement;
         transform.position = position;
-        this.Direction = direction;
     }
 
-    protected abstract void Movement ();
+    protected virtual void Movement ()
+    {
+        if (_movementConfig == null)
+        {
+            return;
+        }
+
+        Vector3 direction = (Vector3)_movementConfig.Direction.normalized;
+        if (_movementConfig.IsTurning)
+        {
+            float duration = _movementConfig.TurningDuration;
+            float angle = _movementConfig.AngleCurve.Evaluate((_timer % duration) / duration);
+            direction = Quaternion.Euler(0, 0, angle) * direction;
+        }
+        transform.position += direction * _movementConfig.Velocity * Time.deltaTime;
+    }
 
     public virtual void Hit (int damage, Vector3 impactPoint)
     {
-        health -= damage;
+        _health -= damage;
 
-        if (health <= 0) {
+        if (_health <= 0) {
             FeedbackManager.Instance.PlayDestructionFeedback(transform.position);
             Destruct ();
         } else {
@@ -45,6 +64,7 @@ public abstract class Obstacle : MonoBehaviour
     }
 
     void Update () {
+        _timer += Time.deltaTime;
         Movement ();
     }
 }
