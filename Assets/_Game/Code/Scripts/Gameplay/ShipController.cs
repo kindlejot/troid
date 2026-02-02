@@ -43,16 +43,16 @@ public class ShipController : MonoBehaviour
             return;
         }
 
+        SettingsManager.OnSettingChanged += HandleSettingChanged;
+
         _gameplayActions = InputManager.Instance.GetGameplayActions();
 
-        _gameplayActions.Shoot.performed += OnShoot;
-        _gameplayActions.Shoot.canceled += OnShoot;
-
-        _gameplayActions.Steer.performed += OnSteer;
-        _gameplayActions.Steer.canceled += OnSteer;
-
-        _gameplayActions.Accelerate.performed += OnAccelerate;
-        _gameplayActions.Accelerate.canceled += OnAccelerate;
+        bool useAutoSteer = true;
+        if (SettingsManager.Instance != null)
+        {
+            useAutoSteer = SettingsManager.Instance.GetSavedSettingValue(SettingsManager.AUTO_STEER_KEY) > 0.5f;
+        }
+        BindInputActions(useAutoSteer);
 
         _isShooting = false;
         _currentSteeringInput = 0;
@@ -61,17 +61,53 @@ public class ShipController : MonoBehaviour
 
     private void OnDisable()
     {
-        if (_gameplayActions.Accelerate != null)
+        UnbindInputActions();
+        SettingsManager.OnSettingChanged -= HandleSettingChanged;
+    }
+
+    private void HandleSettingChanged(string key, float value)
+    {
+        if (key == SettingsManager.AUTO_STEER_KEY)
         {
-            _gameplayActions.Shoot.performed -= OnShoot;
-            _gameplayActions.Shoot.canceled -= OnShoot;
-
-            _gameplayActions.Steer.performed -= OnSteer;
-            _gameplayActions.Steer.canceled -= OnSteer;
-
-            _gameplayActions.Accelerate.performed -= OnAccelerate;
-            _gameplayActions.Accelerate.canceled -= OnAccelerate;
+            BindInputActions(value > 0.5f);
         }
+    }
+
+    private void BindInputActions(bool useAutoSteer)
+    {
+        UnbindInputActions();
+
+        _gameplayActions.Shoot.performed += OnShoot;
+        _gameplayActions.Shoot.canceled += OnShoot;
+
+        if (useAutoSteer)
+        {
+            _gameplayActions.Move.performed += OnMove;
+            _gameplayActions.Move.canceled += OnMove;
+        }
+        else
+        {
+            _gameplayActions.Steer.performed += OnSteer;
+            _gameplayActions.Steer.canceled += OnSteer;
+
+            _gameplayActions.Accelerate.performed += OnAccelerate;
+            _gameplayActions.Accelerate.canceled += OnAccelerate;
+        }
+    }
+
+    private void UnbindInputActions ()
+    {
+        _gameplayActions.Shoot.performed -= OnShoot;
+        _gameplayActions.Shoot.canceled -= OnShoot;
+
+        _gameplayActions.Move.performed -= OnMove;
+        _gameplayActions.Move.canceled -= OnMove;
+
+        _gameplayActions.Steer.performed -= OnSteer;
+        _gameplayActions.Steer.canceled -= OnSteer;
+
+        _gameplayActions.Accelerate.performed -= OnAccelerate;
+        _gameplayActions.Accelerate.canceled -= OnAccelerate;
     }
 
     public void OnShoot(InputAction.CallbackContext context)
@@ -82,6 +118,30 @@ public class ShipController : MonoBehaviour
 
     public void OnSteer(InputAction.CallbackContext context) => _currentSteeringInput = context.ReadValue<float>();
     public void OnAccelerate(InputAction.CallbackContext context) => _currentAccelerateInput = context.ReadValue<float>();
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        Vector2 shipDirection = transform.up;
+        Vector2 intendedDirection = context.ReadValue<Vector2>();
+        float intendedMagnitude = intendedDirection.magnitude;
+        if (context.canceled || intendedMagnitude < 0.1f)
+        {
+            _currentSteeringInput = 0;
+            _currentAccelerateInput = 0;
+        }
+
+        intendedDirection = intendedDirection.normalized;
+
+        float dotProduct = Vector2.Dot(shipDirection, intendedDirection);
+        _currentAccelerateInput = dotProduct > 0 ? intendedMagnitude : -intendedMagnitude;
+
+        _currentSteeringInput = Vector3.Cross(intendedDirection, shipDirection).z;
+
+        if (dotProduct < 0)
+        {
+            _currentSteeringInput /= _currentSteeringInput;
+        }
+    }
 
     // For object avoidance on spawn
     public bool IsSafeToSpawn (Vector2 position)
@@ -122,15 +182,16 @@ public class ShipController : MonoBehaviour
 
     void UpdateRotation ()
     {
+        float maxRot = maxRotationSpeed * Mathf.Abs(_currentSteeringInput);
         if (_currentSteeringInput < 0) // Rotate counter clockwise
         {
             _currentRotationSpeed -= rotationSpeedAcceleration * Time.deltaTime;
-            _currentRotationSpeed = Mathf.Max(-maxRotationSpeed, _currentRotationSpeed);
+            _currentRotationSpeed = Mathf.Max(-maxRot, _currentRotationSpeed);
         }
         else if (_currentSteeringInput > 0) // Rotate clockwise
         {
             _currentRotationSpeed += rotationSpeedAcceleration * Time.deltaTime;
-            _currentRotationSpeed = Mathf.Min(maxRotationSpeed, _currentRotationSpeed);
+            _currentRotationSpeed = Mathf.Min(maxRot, _currentRotationSpeed);
         }
         else
         {

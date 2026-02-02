@@ -17,11 +17,20 @@ MonoBehaviour:
     Spawner: {fileID: 11400000, guid: b04eb8e144ec2b3469ecb11e166f2521, type: 2}
     Movement: {fileID: 11400000, guid: a9b93c7f73f94c94d8d1b6c2b02bcb46, type: 2}
   - Obstacle: {fileID: 11400000, guid: 2811e917958e5a2438dc67ffc2fcaa3c, type: 2}
-    Spawner: {fileID: 11400000, guid: b209341593005ca41a5765c57854bc41, type: 2}
+    Spawner: {fileID: 11400000, guid: daa49172a00c13f43b7a981cf1ff2966, type: 2}
     Movement: {fileID: 11400000, guid: cfaed40ffaf6c324eba77e8bf588e3ab, type: 2}
   - Obstacle: {fileID: 11400000, guid: 2811e917958e5a2438dc67ffc2fcaa3c, type: 2}
     Spawner: {fileID: 11400000, guid: b43891525d5ed994aaafe5921db94c3b, type: 2}
     Movement: {fileID: 11400000, guid: cfaed40ffaf6c324eba77e8bf588e3ab, type: 2}
   - Obstacle: {fileID: 11400000, guid: 2811e917958e5a2438dc67ffc2fcaa3c, type: 2}
     Spawner: {fileID: 11400000, guid: a39f77afcf01d6d4786e3a722a0eba86, type: 2}
-    Movement: {fileID: 11400000, guid: cfaed40ffaf6c324eba77e8bf588e3ab, type: 2}
+    Movement: {fileID: 11400000, guid: 44a7be0a42919e5449fcd56ab4271302, type: 2}
+  - Obstacle: {fileID: 11400000, guid: 2811e917958e5a2438dc67ffc2fcaa3c, type: 2}
+    Spawner: {fileID: 11400000, guid: 3ba49cbfd45550a4e9e65d0caf4b0510, type: 2}
+    Movement: {fileID: 11400000, guid: 78fea143352bbd54d88e1a6a8098e980, type: 2}
+  - Obstacle: {fileID: 11400000, guid: 2811e917958e5a2438dc67ffc2fcaa3c, type: 2}
+    Spawner: {fileID: 11400000, guid: a3332455d860afb4ea5c7502d8c5071e, type: 2}
+    Movement: {fileID: 11400000, guid: 78fea143352bbd54d88e1a6a8098e980, type: 2}
+  - Obstacle: {fileID: 11400000, guid: 2811e917958e5a2438dc67ffc2fcaa3c, type: 2}
+    Spawner: {fileID: 11400000, guid: 292402b2abc07614da7ad48e995329c5, type: 2}
+    Movement: {fileID: 11400000, guid: e27d86c265be4f04a87b4cb8379b2035, type: 2}

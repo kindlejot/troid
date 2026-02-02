@@ -1,5 +1,9 @@
 using UnityEngine;
 using System.ComponentModel;
+using UnityEngine.UI;
+using System.Linq;
+
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -18,6 +22,16 @@ public class MenuManager : MonoBehaviour
     [Header("Play and Resume buttons")] // Content switching based of the GameState when menu was loaded
     [SerializeField] private GameObject playButton;
     [SerializeField] private GameObject resumeButton;
+
+    private GameObject _currentActivePanel;
+
+    public GameObject GetFirstSelectableGameObject()
+    {
+        return _currentActivePanel
+                .GetComponentsInChildren<Selectable>()
+                .FirstOrDefault(o => o.IsInteractable())
+                .gameObject;
+    }
 
     private void Awake()
     {
@@ -49,6 +63,7 @@ public class MenuManager : MonoBehaviour
         gameOverPanel.gameObject.SetActive(false);
 
         if (targetPanel != null) targetPanel.SetActive(true);
+        _currentActivePanel = targetPanel;
     }
 
     // Panel navigation

@@ -1,12 +1,15 @@
-using UnityEditor.Search;
+using System;
 using UnityEngine;
 
 public class SettingsManager : MonoBehaviour
 {
     public static SettingsManager Instance { get; private set; }
 
-    const string MASTER_VOL_KEY = "VolumeMaster";
-    const string SFX_VOL_KEY    = "VolumeSFX";
+    public static Action<string, float> OnSettingChanged;
+
+    public const string MASTER_VOL_KEY = "VolumeMaster";
+    public const string SFX_VOL_KEY    = "VolumeSFX";
+    public const string AUTO_STEER_KEY = "AutoSteer";
 
     private void Awake()
     {
@@ -27,6 +30,7 @@ public class SettingsManager : MonoBehaviour
     {
         SetSettingValue (MASTER_VOL_KEY, GetSavedSettingValue (MASTER_VOL_KEY));
         SetSettingValue (SFX_VOL_KEY, GetSavedSettingValue(SFX_VOL_KEY));
+        SetSettingValue (AUTO_STEER_KEY, GetSavedSettingValue(AUTO_STEER_KEY));
     }
 
     public void SetSettingValue (string key, float value)
@@ -47,6 +51,9 @@ public class SettingsManager : MonoBehaviour
                 }
                 break;
 
+            case AUTO_STEER_KEY:
+                break;
+
             // FUTURE: Add new setting types here
             default:
                 Debug.LogWarning($"Attempted to set unknown key: {key}");
@@ -54,6 +61,8 @@ public class SettingsManager : MonoBehaviour
         }
         PlayerPrefs.SetFloat(key, value);
         PlayerPrefs.Save();
+
+        OnSettingChanged?.Invoke(key, value);
     }
 
     public float GetSavedSettingValue (string key)

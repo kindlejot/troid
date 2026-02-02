@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 310d5e7046d1c8843bbf0388daea6c63, type: 3}
   m_Name: WestNorth
   m_EditorClassIdentifier: Assembly-CSharp::MovementConfig
-  Direction: {x: -1, y: -1}
+  Direction: {x: -1, y: 1}
   Velocity: 1
   IsTurning: 0
   AngleCurve:
