@@ -1,8 +1,11 @@
+using System;
 using UnityEngine;
 
 public class FeedbackManager : MonoBehaviour
 {
     public static FeedbackManager Instance { get; private set; }
+
+    public static event Action<float, float> OnCameraShakeRequested;
 
     [Header ("Explosion effects")]
     [SerializeField] private GameObject obstacleExplosionFXPrefab;
@@ -42,6 +45,7 @@ public class FeedbackManager : MonoBehaviour
             Destroy(fx, lifeTime);
         }
 
+        OnCameraShakeRequested?.Invoke(.35f, .3f);
         AudioManager.Instance.PlayObstacleBreak();
     }
 
@@ -61,6 +65,7 @@ public class FeedbackManager : MonoBehaviour
             Destroy(fx, lifeTime);
         }
 
+        OnCameraShakeRequested?.Invoke(.6f, .7f);
         AudioManager.Instance.PlayShipExploding();
     }
 
@@ -80,6 +85,7 @@ public class FeedbackManager : MonoBehaviour
             Destroy(fx, lifeTime);
         }
 
+        OnCameraShakeRequested?.Invoke(.1f, .15f);
         AudioManager.Instance.PlayObstacleHit();
     }
 }

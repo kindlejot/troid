@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 
 public class HighScoreManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class HighScoreManager : MonoBehaviour
 
     private const string FILENAME = "highscores.json";
     private string _savePath;
+
+    private const int MAX_ENTRIES = 10;
 
     private void Awake()
     {
@@ -28,7 +31,7 @@ public class HighScoreManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
+        
     public void LoadScores()
     {
         if (File.Exists(_savePath))
@@ -82,4 +85,22 @@ public class HighScoreManager : MonoBehaviour
 
         SaveScores();
     }
+
+    public void AddScore (string initials, int score)
+    {
+        _highScoreData.Scores.Capacity = MAX_ENTRIES;
+        if (_highScoreData.Scores.Count < MAX_ENTRIES)
+        {
+            _highScoreData.Scores.Add(new ScoreEntry(initials.ToUpper(), score));
+        }
+        else
+        {
+            _highScoreData.Scores[^1] = new ScoreEntry(initials.ToUpper(), score);
+        }
+        _highScoreData.Scores = _highScoreData.Scores.OrderByDescending(x => x.Score).ToList();
+        _highScoreData.Scores.TrimExcess();
+        SaveScores();
+    }
+
+    public bool IsHighscore(int score) => (score > _highScoreData.Scores.Last().Score);
 }

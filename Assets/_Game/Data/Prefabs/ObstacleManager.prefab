@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &35312390284191756
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4831117375231700319}
+  - component: {fileID: 7012938503150107911}
+  m_Layer: 0
+  m_Name: ObstacleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4831117375231700319
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 35312390284191756}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.8388288, y: -0.89131945, z: 0.80935216}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7012938503150107911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 35312390284191756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9df60de2ef90d14384c42c9cf39a239, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Levels:
+  - {fileID: 11400000, guid: ed45a6470167caa4d8482e9d61a46ece, type: 2}
+  - {fileID: 11400000, guid: bc64fe03255ca974abaf891e57351044, type: 2}
+  - {fileID: 11400000, guid: 1edbd080b01b71443b134403ac81a496, type: 2}
+  - {fileID: 11400000, guid: 4107c2e0602baeb4c925b07309b3d896, type: 2}
+  - {fileID: 11400000, guid: e2e33851d2e551b42a959ca500c9d3d0, type: 2}
+  - {fileID: 11400000, guid: 374e289ceef8a934d9029de9c065ae4e, type: 2}
+  - {fileID: 11400000, guid: 676cd681de9105f429103feb9de88b60, type: 2}
+  - {fileID: 11400000, guid: 03b5694e291966045b02c50b6f302411, type: 2}
+  - {fileID: 11400000, guid: aba3ea41718913f43b8a0584dba7a15c, type: 2}
+  - {fileID: 11400000, guid: 4de47a333745cd642b06cea66172987b, type: 2}
+  CurrentLevel: 0

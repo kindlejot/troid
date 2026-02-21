@@ -17,9 +17,9 @@ public class MineController : Obstacle
         transform.rotation = Random.rotation;
     }
 
-    public override void Init(Vector2 position, Vector2 direction)
+    public override void Init(Vector2 position, ObstacleConfig config, MovementConfig movement = null)
     {
-        base.Init (position, direction);
+        base.Init(position, config, movement);
         Randomize();
     }
 
@@ -30,6 +30,7 @@ public class MineController : Obstacle
 
     protected override void Movement()
     {
+        base.Movement();
         transform.Rotate (_rotationAxis, _angularSpeed * Time.deltaTime);
     }
 }

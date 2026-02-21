@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20a3143ccdd55cd4e8aa192b7bf2ce23, type: 3}
+  m_Name: Level01
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  Obstacles:
+  - Obstacle: {fileID: 11400000, guid: a505cf9198f3ce9439b7037a853c8816, type: 2}
+    Spawner: {fileID: 11400000, guid: b43891525d5ed994aaafe5921db94c3b, type: 2}
+    Movement: {fileID: 11400000, guid: 4aaacb8f6372610459c81107ebbe027b, type: 2}
+  - Obstacle: {fileID: 11400000, guid: a505cf9198f3ce9439b7037a853c8816, type: 2}
+    Spawner: {fileID: 11400000, guid: 292402b2abc07614da7ad48e995329c5, type: 2}
+    Movement: {fileID: 11400000, guid: 4aaacb8f6372610459c81107ebbe027b, type: 2}
+  - Obstacle: {fileID: 11400000, guid: a505cf9198f3ce9439b7037a853c8816, type: 2}
+    Spawner: {fileID: 11400000, guid: 3ba49cbfd45550a4e9e65d0caf4b0510, type: 2}
+    Movement: {fileID: 11400000, guid: 4aaacb8f6372610459c81107ebbe027b, type: 2}

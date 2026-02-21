@@ -4,33 +4,48 @@ using UnityEngine;
 
 public class AsteroidController : Obstacle
 {
-    public int MaxFragments = 4;
-
-    public float MinVelocity = 1;
-    public float MaxVelocity = 3;
-
-    public int FragmentDepth
-    {
-        get => _fragmentDepth;
-        set {
-            _fragmentDepth = value;
-            float scale = Mathf.Pow (.8f, _fragmentDepth);
-            transform.localScale = new Vector3 (scale, scale, scale);
-        }
-    }
-
-    private int _fragmentDepth = 0;
-
-    private float _velocity;
-
     private Vector3 _rotationAxis;
     private float _angularSpeed;
 
+    private ObstacleAsteroid _config;
+
+    public bool CanFragment()
+    {
+        return _config != null && _config.Fragments > 1;
+    }
+
+    public ObstacleData GetFragment (bool lhs)
+    {
+        ObstacleData result = new ObstacleData();
+
+        ObstacleAsteroid newConfig = Instantiate(_config);
+        newConfig.Fragments--;
+        newConfig.RelativeSize *= .75f;
+        newConfig.Health = newConfig.Fragments * 10;
+        result.Obstacle = newConfig;
+
+        SpawnConfig spawner = ScriptableObject.CreateInstance<SpawnConfig>();
+        spawner.Position = transform.position;
+        result.Spawner = spawner;
+
+        MovementConfig movementConfig = ScriptableObject.CreateInstance<MovementConfig>();
+        if (_movementConfig != null && _movementConfig.Velocity != 0)
+        {
+            movementConfig.Direction = Vector3.Cross(_movementConfig.Direction, lhs ? Vector3.forward : Vector3.back);
+            movementConfig.Direction = Quaternion.Euler(0, 0, Random.Range(-30, 30)) * movementConfig.Direction;
+            movementConfig.Velocity = _movementConfig.Velocity;
+        }
+        else
+        {
+            movementConfig.Direction = Random.insideUnitCircle;
+            movementConfig.Velocity = 1;
+        }
+        result.Movement = movementConfig;
+        return result;
+    }
+
     void Randomize ()
     {
-        // Randomize the travel direction and velocity
-        _velocity = Random.Range (MinVelocity, MaxVelocity);
-
         // Randomize the spin axis and angular speed
         _rotationAxis = Random.onUnitSphere;
         _angularSpeed = Random.Range (10, 100);
@@ -39,9 +54,15 @@ public class AsteroidController : Obstacle
         transform.rotation = Random.rotation;
     }
 
-    public override void Init(Vector2 position, Vector2 direction)
+    public override void Init(Vector2 position, ObstacleConfig config, MovementConfig movement = null)
     {
-        base.Init (position, direction);
+        if (config is ObstacleAsteroid oa)
+        {
+            _config = oa;
+            transform.localScale = new Vector3(oa.RelativeSize, oa.RelativeSize, oa.RelativeSize);
+        }
+
+        base.Init(position, config, movement);
         Randomize();
     }
 
@@ -52,7 +73,7 @@ public class AsteroidController : Obstacle
 
     protected override void Movement()
     {
-        transform.position += Direction * _velocity * Time.deltaTime;
+        base.Movement();
         transform.Rotate (_rotationAxis, _angularSpeed * Time.deltaTime);
     }
 }

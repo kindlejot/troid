@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject scoreLabel;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI levelText;
-    [SerializeField] private GameObject gameOverScreen;
 
     // Class variables
     private PlayerControls.GameplayActions _gameplayActions; // For tracking "Pause" 
@@ -103,7 +102,6 @@ public class GameManager : MonoBehaviour
         switch (newState) {
             case GameState.Idle:
                 Ship.gameObject.SetActive(false);
-                gameOverScreen.SetActive (false);
                 scoreLabel.SetActive (false);
                 levelText.gameObject.SetActive (false);
                 scoreText.gameObject.SetActive (false);
@@ -114,7 +112,6 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.ResetGame:
-                gameOverScreen.SetActive (false);
                 Ship.gameObject.SetActive (true);
                 scoreLabel.SetActive(true);
                 scoreText.gameObject.SetActive(true);
@@ -133,8 +130,9 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.GameOver:
                 levelText.gameObject.SetActive (false);
-                gameOverScreen.SetActive (true);
                 Ship.gameObject.SetActive (false);
+                SceneFlowManager.Instance.LoadMenuScene();
+                StartCoroutine(OpenGameOverMenu());
                 break;
             case GameState.Pause:
                 Time.timeScale = 0;
@@ -148,6 +146,16 @@ public class GameManager : MonoBehaviour
             default:
                 throw new System.NotImplementedException ();          
         }
+    }
+
+    private IEnumerator OpenGameOverMenu()
+    {
+        while (MenuManager.Instance == null)
+        {
+            yield return null;
+        }
+        MenuManager.Instance.ShowGameOverPanel(Score);
+        ChangeState(GameState.Idle);
     }
 
     void UpdateState ()
