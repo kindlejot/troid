@@ -35,30 +35,6 @@ public class SettingsManager : MonoBehaviour
 
     public void SetSettingValue (string key, float value)
     {
-        switch (key)
-        {
-            case MASTER_VOL_KEY:
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.ChangeVolume(value);
-                }
-                break;
-
-            case SFX_VOL_KEY:
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.ChangeSFXVolume(value);
-                }
-                break;
-
-            case AUTO_STEER_KEY:
-                break;
-
-            // FUTURE: Add new setting types here
-            default:
-                Debug.LogWarning($"Attempted to set unknown key: {key}");
-                return;
-        }
         PlayerPrefs.SetFloat(key, value);
         PlayerPrefs.Save();
 
