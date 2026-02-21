@@ -1,5 +1,5 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,11 +22,11 @@ public class GameManager : MonoBehaviour
     private GameState _previousState;
 
     public int Score;
+    public static Action<int> OnScoreChanged;
 
     public ShipController Ship;
     [SerializeField] private ObstacleManager obstacles;
     [SerializeField] private GameObject scoreLabel;
-    [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI levelText;
 
     // Class variables
@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
     void SetScore (int score)
     {
         Score = score;
-        scoreText.text = Score.ToString();
+        OnScoreChanged?.Invoke(score);
     }
 
     public void AddPoints (int points)
@@ -104,7 +104,6 @@ public class GameManager : MonoBehaviour
                 Ship.gameObject.SetActive(false);
                 scoreLabel.SetActive (false);
                 levelText.gameObject.SetActive (false);
-                scoreText.gameObject.SetActive (false);
                 obstacles.Reset();
                 for (int i = 0; i < 5; i++)
                 {
@@ -114,7 +113,6 @@ public class GameManager : MonoBehaviour
             case GameState.ResetGame:
                 Ship.gameObject.SetActive (true);
                 scoreLabel.SetActive(true);
-                scoreText.gameObject.SetActive(true);
                 Ship.Reset ();
                 obstacles.Reset ();
                 SetScore (0);
