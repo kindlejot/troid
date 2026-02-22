@@ -20,6 +20,9 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject playButton;
     [SerializeField] private GameObject resumeButton;
 
+    [Header("Extra layouts")]
+    [SerializeField] private GameObject hallOfFameLayout;
+
     private GameObject _currentActivePanel;
 
     public GameObject GetFirstSelectableGameObject()
@@ -59,12 +62,20 @@ public class MenuManager : MonoBehaviour
         highscoresPanel.SetActive(false);
         gameOverPanel.gameObject.SetActive(false);
 
+        // Layouts
+        hallOfFameLayout.gameObject.SetActive(false);
+
         if (targetPanel != null) targetPanel.SetActive(true);
         _currentActivePanel = targetPanel;
     }
 
     // Panel navigation
-    public void ShowMainMenuPanel() => OpenPanel(mainMenuPanel);
+    public void ShowMainMenuPanel()
+    {
+        OpenPanel(mainMenuPanel);
+        hallOfFameLayout.gameObject.SetActive(true);
+    }
+
     public void ShowSettingsPanel() => OpenPanel(settingsPanel);
     public void ShowHighscoresPanel() => OpenPanel(highscoresPanel);
 

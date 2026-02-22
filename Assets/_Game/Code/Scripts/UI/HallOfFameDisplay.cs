@@ -1,8 +1,9 @@
 using System.Globalization;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
-public class HighScoreDisplay : MonoBehaviour
+public class HallOfFameDisplay : MonoBehaviour
 {
     [SerializeField] GameObject scoreContainer;
     [SerializeField] GameObject scoreRowPrefab;
@@ -11,7 +12,7 @@ public class HighScoreDisplay : MonoBehaviour
     {
         if (scoreContainer == null || scoreRowPrefab == null)
         {
-            Debug.LogError("ScoreContainer or ScoreRowPrefab not assigned to HighScoreDisplay script");
+            Debug.LogError("ScoreContainer or ScoreRowPrefab not assigned to HallOfFame script");
             return;
         }
 
@@ -36,7 +37,7 @@ public class HighScoreDisplay : MonoBehaviour
                 NumberGroupSeparator = ",",
                 NumberDecimalDigits = 0 };
 
-            foreach (ScoreEntry entry in HighScoreManager.Instance.HighScores)
+            foreach (ScoreEntry entry in HighScoreManager.Instance.HighScores.Take(3))
             {
                 // 01:ABC.....1,234,567
                 string positionString = $"{position,2:N0}:".Replace(' ', '0');
